@@ -7,7 +7,7 @@ public class LFSR {
     private int currRegister;
     private int mask;
 
-    LFSR(String initRegister, int[] polinom) {
+    public LFSR(String initRegister, int[] polinom) {
         this.polinom = polinom;
         if(initRegister.length() > polinom[0]) {
             throw new InvalidRegisterException(String.format("The length of the obtained register (%s) exceeds the" +
@@ -18,8 +18,20 @@ public class LFSR {
         generateMask();
     }
 
-    LFSR(String initRegister) {
+    public LFSR(String initRegister) {
         this(initRegister, defaultPolinom);
+    }
+
+    public static String keyToStr(byte[] key) {
+        StringBuilder strKey = new StringBuilder();
+        for(byte keyByte : key) {
+            StringBuilder binarByte = new StringBuilder(Integer.toBinaryString(keyByte & 255));
+            for(int i = binarByte.length(); i < 8; i++) {
+                binarByte.insert(0, "0");
+            }
+            strKey.append(binarByte);
+        }
+        return strKey.toString();
     }
 
     private byte getBitAtPos(int pos) {
@@ -32,7 +44,6 @@ public class LFSR {
             max.append('1');
         }
         mask = Integer.parseInt(max.toString(), 2);
-        System.out.println(Integer.toBinaryString(mask));
     }
 
 

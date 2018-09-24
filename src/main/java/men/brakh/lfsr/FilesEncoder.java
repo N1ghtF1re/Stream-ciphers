@@ -6,8 +6,10 @@ public class FilesEncoder {
 
     private byte[] readFile(String filePath) throws IOException {
         byte[] content;
-        try (FileInputStream fis = new FileInputStream(new File(filePath))){
+        try{
+            FileInputStream fis = new FileInputStream(new File(filePath));
             content = fis.readAllBytes();
+            fis.close();
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -16,8 +18,10 @@ public class FilesEncoder {
     }
     private void writeFile(String filePath, byte[] content) throws IOException {
 
-        try(FileOutputStream fos = new FileOutputStream(new File(filePath))) {
+        try{
+            FileOutputStream fos = new FileOutputStream(new File(filePath));
             fos.write(content);
+            fos.close();
         }catch (Exception e) {
             throw new IOException(e);
         }
@@ -34,17 +38,7 @@ public class FilesEncoder {
         return filePath.substring(0, filePath.lastIndexOf('.')) + "-key.txt";
     }
 
-    private String keyToStr(byte[] key) {
-        StringBuilder strKey = new StringBuilder();
-        for(byte keyByte : key) {
-            StringBuilder binarByte = new StringBuilder(Integer.toBinaryString(keyByte & 255));
-            for(int i = binarByte.length(); i <= 8; i++) {
-                binarByte.insert(0, "0");
-            }
-            strKey.append(binarByte);
-        }
-        return strKey.toString();
-    }
+
 
     public String encode(String filePath, String register) throws IOException {
         byte[] plainText = readFile(filePath);
@@ -53,7 +47,7 @@ public class FilesEncoder {
         writeFile(getOutEncodePath(filePath), cipherText);
 
         byte[] key = lfsr.generateKey(plainText.length);
-        String strKey = keyToStr(key);
+        String strKey = LFSR.keyToStr(key);
         writeFile(getOutKeyPath(filePath), strKey.getBytes());
 
         return strKey;
@@ -66,7 +60,7 @@ public class FilesEncoder {
         writeFile(getOutDecodePath(filePath), plainText);
 
         byte[] key = lfsr.generateKey(plainText.length);
-        String strKey = keyToStr(key);
+        String strKey = LFSR.keyToStr(key);
         writeFile(getOutKeyPath(filePath), strKey.getBytes());
 
         return strKey;
