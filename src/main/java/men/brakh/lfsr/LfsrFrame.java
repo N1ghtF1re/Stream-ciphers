@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 public class LfsrFrame extends JFrame {
     private String currentPath;
@@ -88,9 +89,16 @@ public class LfsrFrame extends JFrame {
                 dialogMSG(String.format("%s!\nInitial register: %s\nKey: %s",
                         type, inpRegister.getText(), trimStr(key)), "%s");
             }
-            catch(Exception ex) {
+            catch(InvalidRegisterException ex) {
                 dialogMSG(ex.getMessage(), "ERROR");
             }
+            catch(IOException ex) {
+                dialogMSG("Invalid file", "ERROR");
+            }
+            catch (NumberFormatException ex) {
+                dialogMSG("Invalid register", "ERROR");
+            }
+
         }
     }
 

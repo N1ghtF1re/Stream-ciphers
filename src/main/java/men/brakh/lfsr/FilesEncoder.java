@@ -5,16 +5,22 @@ import java.io.*;
 public class FilesEncoder {
 
     private byte[] readFile(String filePath) throws IOException {
-        FileInputStream fis = new FileInputStream(new File(filePath));
-        byte[] content = fis.readAllBytes();
-        fis.close();
+        byte[] content;
+        try (FileInputStream fis = new FileInputStream(new File(filePath))){
+            content = fis.readAllBytes();
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
         return content;
 
     }
     private void writeFile(String filePath, byte[] content) throws IOException {
-        FileOutputStream fos = new FileOutputStream(new File(filePath));
-        fos.write(content);
-        fos.close();
+
+        try(FileOutputStream fos = new FileOutputStream(new File(filePath))) {
+            fos.write(content);
+        }catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
 
