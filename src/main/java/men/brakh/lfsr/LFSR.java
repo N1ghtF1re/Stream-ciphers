@@ -2,7 +2,8 @@ package men.brakh.lfsr;
 
 public class LFSR {
     private int polinom[] = {24, 4,3,1};
-    private int register =  Integer.parseInt("101001111111111111111011", 2);
+    private int register = Integer.parseInt("101001111111111111111011", 2);
+    private int currRegister;
     private int mask;
 
     LFSR() {
@@ -10,7 +11,7 @@ public class LFSR {
     }
 
     private byte getBitAtPos(int pos) {
-        return (byte) ((byte) (register >> pos - 1) & 1);
+        return (byte) ((byte) (currRegister >> pos - 1) & 1);
     }
 
     private void generateMask() {
@@ -23,10 +24,9 @@ public class LFSR {
     }
 
 
-    public byte[] generateKey(byte[] source) {
-        byte[] key = new byte[source.length];
-        //System.out.println("111111111111111111111111".length());
-        System.out.println(Integer.toBinaryString(register) + " " +Integer.toBinaryString(register).length());
+    public byte[] generateKey(int len) {
+        currRegister = register;
+        byte[] key = new byte[len];
         for(int i = 0; i < key.length; i++) { // Генерируем ключ по байтам
             for(int j = 0; j < 8; j++) {
 
@@ -37,19 +37,27 @@ public class LFSR {
                 for(int k = 1; k < polinom.length; k++) {
                     newFirstBit ^= getBitAtPos(polinom[k]);
                 }
-                System.out.println("NEW BIT = " + newFirstBit + "\n");
-                register = (register << 1) & mask; // Сдвигаем регистр
-                register = register | newFirstBit; // Устанавливаем первый бит согласно вычисленям
-                System.out.println(Integer.toBinaryString(register) + " " +Integer.toBinaryString(register).length());
+                currRegister = (currRegister << 1) & mask; // Сдвигаем регистр
+                currRegister = currRegister | newFirstBit; // Устанавливаем первый бит согласно вычисленям
             }
             System.out.println("KEY : " + (Integer.toBinaryString(key[i] & 255)));
         }
 
-        System.out.println(register);
-        return new byte[]{0};
+        System.out.println(currRegister);
+        return key;
     }
 
-    public static void main(String args[]) {
-        new LFSR().generateKey(new byte[]{1,2,3,4,5,6,7});
+    public byte[] encrypt(byte[] plainBytes) {
+        byte[] key = generateKey(plainBytes.length);
+        byte[] cipherBytes = new byte[plainBytes.length];
+        for(int i = 0; i < plainBytes.length; i++) {
+            cipherBytes[i] = (byte) (plainBytes[i] ^ key[i]);
+        }
+        return cipherBytes;
     }
+
+    public byte[] decrypt(byte[] cipherBytes) {
+        return encrypt(cipherBytes);
+    }
+
 }
