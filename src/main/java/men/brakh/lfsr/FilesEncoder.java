@@ -29,13 +29,13 @@ public class FilesEncoder {
 
 
     private String getOutEncodePath(String filePath) {
-        return filePath.substring(0, filePath.lastIndexOf('.')) + ".encoded";
+        return filePath + ".encoded";
     }
     private String getOutDecodePath(String filePath) {
-        return filePath.substring(0, filePath.lastIndexOf('.')) + ".decoded";
+        return filePath + ".decoded";
     }
     private String getOutKeyPath(String filePath) {
-        return filePath.substring(0, filePath.lastIndexOf('.')) + "-key.txt";
+        return filePath + "-key.txt";
     }
 
 

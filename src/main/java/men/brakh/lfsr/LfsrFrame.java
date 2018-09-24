@@ -87,7 +87,7 @@ public class LfsrFrame extends JFrame {
                     type = "Decrypted";
                 }
                 dialogMSG(String.format("%s!\nInitial register: %s\nKey: %s",
-                        type, inpRegister.getText(), trimStr(key)), "%s");
+                        type, inpRegister.getText(), trimStr(key)), type);
             }
             catch(InvalidRegisterException ex) {
                 dialogMSG(ex.getMessage(), "ERROR");
