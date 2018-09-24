@@ -1,13 +1,25 @@
 package men.brakh.lfsr;
 
 public class LFSR {
-    private int polinom[] = {24, 4,3,1};
-    private int register = Integer.parseInt("101001111111111111111011", 2);
+    private static int[] defaultPolinom = {24, 4,3,1};
+    private int[] polinom;
+    private int register;
     private int currRegister;
     private int mask;
 
-    LFSR() {
+    LFSR(String initRegister, int[] polinom) {
+        this.polinom = polinom;
+        if(initRegister.length() > polinom[0]) {
+            throw new InvalidRegisterException(String.format("The length of the obtained register (%s) exceeds the" +
+                    " maximum degree of the polynomial (%s)", initRegister.length(), polinom[0])
+            );
+        }
+        register = Integer.parseInt(initRegister, 2);
         generateMask();
+    }
+
+    LFSR(String initRegister) {
+        this(initRegister, defaultPolinom);
     }
 
     private byte getBitAtPos(int pos) {
@@ -40,10 +52,7 @@ public class LFSR {
                 currRegister = (currRegister << 1) & mask; // Сдвигаем регистр
                 currRegister = currRegister | newFirstBit; // Устанавливаем первый бит согласно вычисленям
             }
-            System.out.println("KEY : " + (Integer.toBinaryString(key[i] & 255)));
         }
-
-        System.out.println(currRegister);
         return key;
     }
 
