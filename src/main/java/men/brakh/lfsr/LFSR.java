@@ -1,5 +1,10 @@
 package men.brakh.lfsr;
 
+/**
+ * Class for key generation, encryption and decryption using LFSR
+ * About LFSR: https://en.wikipedia.org/wiki/Linear-feedback_shift_register
+ * @author Alexandr Pankratiew
+ */
 public class LFSR {
     private static int[] defaultPolinom = {24, 4,3,1};
     private int[] polinom;
@@ -7,6 +12,11 @@ public class LFSR {
     private int currRegister;
     private int mask;
 
+    /**
+     * Encoder constructor
+     * @param initRegister Default register state
+     * @param polinom An array of indices of elements of a polynomial whose multiplier is 1
+     */
     public LFSR(String initRegister, int[] polinom) {
         this.polinom = polinom;
         if(initRegister.length() > polinom[0]) {
@@ -18,10 +28,19 @@ public class LFSR {
         generateMask();
     }
 
+    /**
+     * Encoder constructor with default poinom (x^24 + x^4 + x^3 + x + 1)
+     * @param initRegister An array of indices of elements of a polynomial whose multiplier is 1
+     */
     public LFSR(String initRegister) {
         this(initRegister, defaultPolinom);
     }
 
+    /**
+     * Convert a key (byte array) to a text representation in binary form
+     * @param key Key
+     * @return A string with a key in a binary representation
+     */
     public static String keyToStr(byte[] key) {
         StringBuilder strKey = new StringBuilder();
         for(byte keyByte : key) {
@@ -34,10 +53,18 @@ public class LFSR {
         return strKey.toString();
     }
 
+    /**
+     * Get bit at position
+     * @param pos index of bit
+     * @return bit
+     */
     private byte getBitAtPos(int pos) {
         return (byte) ((byte) (currRegister >> pos - 1) & 1);
     }
 
+    /**
+     * Generating a mask for register size
+     */
     private void generateMask() {
         StringBuilder max = new StringBuilder();
         for(int i = 0; i < polinom[0]; i++) {
@@ -47,6 +74,11 @@ public class LFSR {
     }
 
 
+    /**
+     * Generating a key
+     * @param len Length of key
+     * @return Key
+     */
     public byte[] generateKey(int len) {
         currRegister = register;
         byte[] key = new byte[len];
@@ -66,6 +98,7 @@ public class LFSR {
         }
         return key;
     }
+
 
     public byte[] encrypt(byte[] plainBytes) {
         byte[] key = generateKey(plainBytes.length);
