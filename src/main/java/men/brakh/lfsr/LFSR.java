@@ -8,8 +8,8 @@ package men.brakh.lfsr;
 public class LFSR {
     private static int[] defaultPolinom = {24, 4,3,1};
     private int[] polinom;
-    private int register;
-    private int currRegister;
+    private long register;
+    private long currRegister;
     private int mask;
 
     /**
@@ -24,7 +24,7 @@ public class LFSR {
                     " maximum degree of the polynomial (%s)", initRegister.length(), polinom[0])
             );
         }
-        register = Integer.parseInt(initRegister, 2);
+        register = Long.parseLong(initRegister, 2);
         generateMask();
     }
 
