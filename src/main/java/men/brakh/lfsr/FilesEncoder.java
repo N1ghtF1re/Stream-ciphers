@@ -40,29 +40,33 @@ public class FilesEncoder {
 
 
 
-    public String encode(String filePath, String register) throws IOException {
+    public String[] encode(String filePath, String register) throws IOException {
         byte[] plainText = readFile(filePath);
         LFSR lfsr = new LFSR(register);
         byte[] cipherText = lfsr.encrypt(plainText);
         writeFile(getOutEncodePath(filePath), cipherText);
 
         byte[] key = lfsr.generateKey(plainText.length);
-        String strKey = LFSR.keyToStr(key);
+        String strKey = LFSR.keyToStr(key, plainText.length);
+        String strCipher = LFSR.keyToStr(cipherText, 15);
+        String strPlain = LFSR.keyToStr(plainText, 15);
         writeFile(getOutKeyPath(filePath), strKey.getBytes());
 
-        return strKey;
+        return new String[]{strKey, strCipher, strPlain};
     }
 
-    public String decode(String filePath, String register) throws IOException {
+    public String[]  decode(String filePath, String register) throws IOException {
         byte[] cipherText = readFile(filePath);
         LFSR lfsr = new LFSR(register);
         byte[] plainText = lfsr.encrypt(cipherText);
         writeFile(getOutDecodePath(filePath), plainText);
 
         byte[] key = lfsr.generateKey(plainText.length);
-        String strKey = LFSR.keyToStr(key);
+        String strKey = LFSR.keyToStr(key, 15);
+        String plainStr = LFSR.keyToStr(plainText, 15);
+        String strCipher = LFSR.keyToStr(cipherText, 15);
         writeFile(getOutKeyPath(filePath), strKey.getBytes());
 
-        return strKey;
+        return new String[]{strKey, plainStr, strCipher};
     }
 }

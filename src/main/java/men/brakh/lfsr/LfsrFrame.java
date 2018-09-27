@@ -16,7 +16,7 @@ public class LfsrFrame extends JFrame {
     private JLabel lblCurrentFile = new JLabel("input.txt");
 
     private JLabel lblRegister = new JLabel("Default register location:");
-    private JTextField inpRegister = new JTextField("101001111111111111111011",40);
+    private JTextField inpRegister = new JTextField("101010101010101010101010",40);
 
     private JButton btnApply = new JButton("To do everything!\n");
 
@@ -49,10 +49,10 @@ public class LfsrFrame extends JFrame {
         container.add(btnApply);
     }
     public String trimStr(String str) {
-        if (str.length() > 40) {
-            return str.substring(0, 40) + "...";
+        if (str.length() >= 15*8) {
+            return str.substring(0, 15*8) + "...";
         }
-        return  null;
+        return  str;
     }
     void dialogMSG(String message, String title) {
         JOptionPane.showMessageDialog(null,
@@ -77,17 +77,26 @@ public class LfsrFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             FilesEncoder filesEncoder = new FilesEncoder();
             try {
+                String[] arr;
                 String key;
+                String text;
                 String type;
+                String source;
                 if (radioIsEncrypt.isSelected()) {
-                    key = filesEncoder.encode(currentPath, inpRegister.getText());
+                    arr = filesEncoder.encode(currentPath, inpRegister.getText());
+                    key = arr[0];
+                    source = arr[2];
+                    text = arr[1];
                     type = "Encrypted";
                 } else {
-                    key = filesEncoder.decode(currentPath, inpRegister.getText());
+                    arr = filesEncoder.decode(currentPath, inpRegister.getText());
+                    key = arr[0];
+                    source = arr[2];
+                    text = arr[1];
                     type = "Decrypted";
                 }
-                dialogMSG(String.format("%s!\nInitial register: %s\nKey: %s",
-                        type, inpRegister.getText(), trimStr(key)), type);
+                dialogMSG(String.format("%s!\nInitial register: %s\nKey: %s\nSrc: %s\nFile: %s",
+                        type, inpRegister.getText(), trimStr(key), trimStr(source), trimStr(text)), type);
             }
             catch(InvalidRegisterException ex) {
                 dialogMSG(ex.getMessage(), "ERROR");

@@ -41,11 +41,14 @@ public class LFSR {
      * @param key Key
      * @return A string with a key in a binary representation
      */
-    public static String keyToStr(byte[] key) {
+    public static String keyToStr(byte[] key, int bytesCount) {
         StringBuilder strKey = new StringBuilder();
-        for(byte keyByte : key) {
-            StringBuilder binarByte = new StringBuilder(Integer.toBinaryString(keyByte & 255));
-            for(int i = binarByte.length(); i < 8; i++) {
+        if (bytesCount > key.length) {
+            bytesCount = key.length;
+        }
+        for(int i = 0; i < bytesCount; i++) {
+            StringBuilder binarByte = new StringBuilder(Integer.toBinaryString(key[i] & 255));
+            for(int j = binarByte.length(); j < 8; j++) {
                 binarByte.insert(0, "0");
             }
             strKey.append(binarByte);
