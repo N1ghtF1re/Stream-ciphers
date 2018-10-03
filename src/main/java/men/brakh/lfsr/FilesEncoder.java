@@ -3,6 +3,10 @@ package men.brakh.lfsr;
 import java.io.*;
 
 public class FilesEncoder {
+    StreamCipher cipher;
+    public FilesEncoder(StreamCipher cipher) {
+        this.cipher = cipher;
+    }
 
     private byte[] readFile(String filePath) throws IOException {
         byte[] content;
@@ -40,13 +44,12 @@ public class FilesEncoder {
 
 
 
-    public String[] encode(String filePath, String register) throws IOException {
+    public String[] encode(String filePath) throws IOException {
         byte[] plainText = readFile(filePath);
-        LFSR lfsr = new LFSR(register);
-        byte[] cipherText = lfsr.encrypt(plainText);
+        byte[] cipherText = cipher.encrypt(plainText);
         writeFile(getOutEncodePath(filePath), cipherText);
 
-        byte[] key = lfsr.generateKey(plainText.length);
+        byte[] key = cipher.generateKey(plainText.length);
         String strKey = LFSR.keyToStr(key, plainText.length);
         String strCipher = LFSR.keyToStr(cipherText, 15);
         String strPlain = LFSR.keyToStr(plainText, 15);
@@ -55,13 +58,12 @@ public class FilesEncoder {
         return new String[]{strKey, strCipher, strPlain};
     }
 
-    public String[]  decode(String filePath, String register) throws IOException {
+    public String[]  decode(String filePath) throws IOException {
         byte[] cipherText = readFile(filePath);
-        LFSR lfsr = new LFSR(register);
-        byte[] plainText = lfsr.encrypt(cipherText);
+        byte[] plainText = cipher.encrypt(cipherText);
         writeFile(getOutDecodePath(filePath), plainText);
 
-        byte[] key = lfsr.generateKey(plainText.length);
+        byte[] key = cipher.generateKey(plainText.length);
         String strKey = LFSR.keyToStr(key, 15);
         String plainStr = LFSR.keyToStr(plainText, 15);
         String strCipher = LFSR.keyToStr(cipherText, 15);

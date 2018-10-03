@@ -5,12 +5,19 @@ package men.brakh.lfsr;
  * About LFSR: https://en.wikipedia.org/wiki/Linear-feedback_shift_register
  * @author Alexandr Pankratiew
  */
-public class LFSR {
+public class LFSR implements StreamCipher{
     private static int[] defaultPolinom = {24, 4,3,1};
     private int[] polinom;
-    private long register;
+    protected long register;
     private long currRegister;
     private int mask;
+
+
+    public LFSR(long initRegister, int[] polinom) {
+        this.register = initRegister;
+        this.polinom = polinom;
+        generateMask();
+    }
 
     /**
      * Encoder constructor
@@ -27,6 +34,7 @@ public class LFSR {
         register = Long.parseLong(initRegister, 2);
         generateMask();
     }
+
 
     /**
      * Encoder constructor with default poinom (x^24 + x^4 + x^3 + x + 1)
@@ -82,6 +90,7 @@ public class LFSR {
      * @param len Length of key
      * @return Key
      */
+    @Override
     public byte[] generateKey(int len) {
         currRegister = register;
         byte[] key = new byte[len];
@@ -102,7 +111,7 @@ public class LFSR {
         return key;
     }
 
-
+    @Override
     public byte[] encrypt(byte[] plainBytes) {
         byte[] key = generateKey(plainBytes.length);
         byte[] cipherBytes = new byte[plainBytes.length];
@@ -112,6 +121,7 @@ public class LFSR {
         return cipherBytes;
     }
 
+    @Override
     public byte[] decrypt(byte[] cipherBytes) {
         return encrypt(cipherBytes);
     }

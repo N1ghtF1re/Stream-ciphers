@@ -4,11 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 
 public class LfsrFrame extends JFrame {
     private String currentPath;
+
+    private JRadioButton radioIsLFSR = new JRadioButton("LFSR");
+    private JRadioButton radioIsGefe = new JRadioButton("GEFE");
+
     private JRadioButton radioIsEncrypt = new JRadioButton("Encode");
     private JRadioButton radioIsDecrypt = new JRadioButton("Decode");
 
@@ -17,6 +23,8 @@ public class LfsrFrame extends JFrame {
 
     private JLabel lblRegister = new JLabel("Default register location:");
     private JTextField inpRegister = new JTextField("101010101010101010101010",40);
+    private JTextField inpRegister2 = new JTextField("10101010101010101010101010101010",40);
+    private JTextField inpRegister3 = new JTextField("1010101010101010101010101010101010101010",40);
 
     private JButton btnApply = new JButton("To do everything!\n");
 
@@ -29,10 +37,27 @@ public class LfsrFrame extends JFrame {
         container.setLayout(new GridLayout(10,1));
         container.add(lblRegister);
         container.add(inpRegister);
+        container.add(inpRegister2);
+        container.add(inpRegister3);
 
         lblCurrentFile.setVerticalAlignment(JLabel.CENTER);
         container.add(btnSelectFile);
         container.add(lblCurrentFile);
+
+
+        ButtonGroup bgSelectCipher = new ButtonGroup();
+        Panel pnlSelectCipher = new Panel(new GridLayout(1,3));
+        bgSelectCipher.add(radioIsLFSR);
+        bgSelectCipher.add(radioIsGefe);
+        pnlSelectCipher.add(radioIsLFSR);
+        pnlSelectCipher.add(radioIsGefe);
+
+        RadioHandler radioHandler = new RadioHandler();
+        radioIsLFSR.addItemListener(radioHandler);
+        radioIsGefe.addItemListener(radioHandler);
+
+        container.add(pnlSelectCipher);
+
 
         ButtonGroup bgSelectMode = new ButtonGroup();
         Panel pnlSelectMode = new Panel(new GridLayout(1,2));
@@ -43,11 +68,26 @@ public class LfsrFrame extends JFrame {
         container.add(pnlSelectMode);
 
         radioIsEncrypt.setSelected(true);
+        radioIsLFSR.setSelected(true);
 
         btnSelectFile.addActionListener(new SelectFile());
         btnApply.addActionListener(new ButtonEventListener());
         container.add(btnApply);
     }
+
+    class RadioHandler implements ItemListener {
+        @Override
+        public void itemStateChanged(ItemEvent itemEvent) {
+            if(radioIsLFSR.isSelected()) {
+                inpRegister2.show(false);
+                inpRegister3.show(false);
+            } else if (radioIsGefe.isSelected()) {
+                inpRegister2.show(true);
+                inpRegister3.show(true);
+            }
+        }
+    }
+
     public String trimStr(String str) {
         if (str.length() >= 15*8) {
             return str.substring(0, 15*8) + "...";
@@ -75,7 +115,12 @@ public class LfsrFrame extends JFrame {
     }
     class ButtonEventListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            FilesEncoder filesEncoder = new FilesEncoder();
+            FilesEncoder filesEncoder = null;
+            if (radioIsLFSR.isSelected()) {
+                filesEncoder = new FilesEncoder(new LFSR(inpRegister.getText()));
+            } else if (radioIsGefe.isSelected()) {
+                filesEncoder = new FilesEncoder(new Geffe(inpRegister.getText(), inpRegister2.getText(), inpRegister3.getText()));
+            }
             try {
                 String[] arr;
                 String key;
@@ -83,13 +128,14 @@ public class LfsrFrame extends JFrame {
                 String type;
                 String source;
                 if (radioIsEncrypt.isSelected()) {
-                    arr = filesEncoder.encode(currentPath, inpRegister.getText());
+
+                    arr = filesEncoder.encode(currentPath);
                     key = arr[0];
                     source = arr[2];
                     text = arr[1];
                     type = "Encrypted";
                 } else {
-                    arr = filesEncoder.decode(currentPath, inpRegister.getText());
+                    arr = filesEncoder.decode(currentPath);
                     key = arr[0];
                     source = arr[2];
                     text = arr[1];
