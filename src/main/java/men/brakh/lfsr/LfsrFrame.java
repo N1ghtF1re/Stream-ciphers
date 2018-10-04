@@ -14,6 +14,7 @@ public class LfsrFrame extends JFrame {
 
     private JRadioButton radioIsLFSR = new JRadioButton("LFSR");
     private JRadioButton radioIsGefe = new JRadioButton("GEFE");
+    private JRadioButton radioIsRc4 = new JRadioButton("RC4");
 
     private JRadioButton radioIsEncrypt = new JRadioButton("Encode");
     private JRadioButton radioIsDecrypt = new JRadioButton("Decode");
@@ -49,12 +50,15 @@ public class LfsrFrame extends JFrame {
         Panel pnlSelectCipher = new Panel(new GridLayout(1,3));
         bgSelectCipher.add(radioIsLFSR);
         bgSelectCipher.add(radioIsGefe);
+        bgSelectCipher.add(radioIsRc4);
         pnlSelectCipher.add(radioIsLFSR);
         pnlSelectCipher.add(radioIsGefe);
+        pnlSelectCipher.add(radioIsRc4);
 
         RadioHandler radioHandler = new RadioHandler();
         radioIsLFSR.addItemListener(radioHandler);
         radioIsGefe.addItemListener(radioHandler);
+        radioIsRc4.addItemListener(radioHandler);
 
         container.add(pnlSelectCipher);
 
@@ -78,7 +82,7 @@ public class LfsrFrame extends JFrame {
     class RadioHandler implements ItemListener {
         @Override
         public void itemStateChanged(ItemEvent itemEvent) {
-            if(radioIsLFSR.isSelected()) {
+            if(radioIsLFSR.isSelected() || radioIsRc4.isSelected()) {
                 inpRegister2.show(false);
                 inpRegister3.show(false);
             } else if (radioIsGefe.isSelected()) {
@@ -120,6 +124,8 @@ public class LfsrFrame extends JFrame {
                 filesEncoder = new FilesEncoder(new LFSR(inpRegister.getText()));
             } else if (radioIsGefe.isSelected()) {
                 filesEncoder = new FilesEncoder(new Geffe(inpRegister.getText(), inpRegister2.getText(), inpRegister3.getText()));
+            } else if(radioIsRc4.isSelected()) {
+                filesEncoder = new FilesEncoder(new RC4(inpRegister.getText()));
             }
             try {
                 String[] arr;
