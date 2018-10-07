@@ -32,8 +32,8 @@ public class Geffe implements StreamCipher {
             );
         }
         register1 = Long.parseLong(initRegister1, 2);
-        register2 = Long.parseLong(initRegister1, 2);
-        register3 = Long.parseLong(initRegister1, 2);
+        register2 = Long.parseLong(initRegister2, 2);
+        register3 = Long.parseLong(initRegister3, 2);
     }
 
     public Geffe(String initRegister1, String initRegister2, String initRegister3) {
@@ -58,6 +58,8 @@ public class Geffe implements StreamCipher {
     @Override
     public byte[] generateKey(int len) {
         LFSR lfsr = new LFSR(register1, polinom1);
+
+
         byte[] key1 = lfsr.generateKey(len);
         lfsr = new LFSR(register2, polinom2);
         byte[] key2 = lfsr.generateKey(len);

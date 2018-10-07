@@ -158,6 +158,7 @@ public class LfsrFrame extends JFrame {
             }
             catch (NumberFormatException ex) {
                 dialogMSG("Invalid register", "ERROR");
+                ex.printStackTrace();
             }
 
         }

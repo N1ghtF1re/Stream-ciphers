@@ -10,7 +10,7 @@ public class LFSR implements StreamCipher{
     private int[] polinom;
     protected long register;
     private long currRegister;
-    private int mask;
+    private long mask;
 
 
     public LFSR(long initRegister, int[] polinom) {
@@ -81,7 +81,7 @@ public class LFSR implements StreamCipher{
         for(int i = 0; i < polinom[0]; i++) {
             max.append('1');
         }
-        mask = Integer.parseInt(max.toString(), 2);
+        mask = Long.parseLong(max.toString(), 2);
     }
 
 
